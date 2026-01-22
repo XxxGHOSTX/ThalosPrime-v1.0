@@ -60,7 +60,7 @@ if git show-ref --verify --quiet "refs/heads/$BRANCH_NAME"; then
     log_warn "Branch $BRANCH_NAME already exists"
     read -p "Do you want to switch to it? (y/n) " -n 1 -r
     echo
-    if [[ $REPL =~ ^[Yy]$ ]]; then
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
         git checkout "$BRANCH_NAME"
         log_info "Switched to existing branch: $BRANCH_NAME"
     fi
