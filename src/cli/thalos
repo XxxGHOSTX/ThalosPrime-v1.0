@@ -1,0 +1,203 @@
+#!/usr/bin/env python3
+"""
+Thalos Prime CLI
+
+Command-line interface for managing agent sessions.
+Provides commands: start, stop, status, resume, list, etc.
+"""
+
+import click
+import sys
+import json
+from pathlib import Path
+
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent / "python"))
+
+from thalos_agent_session import SessionManager, SessionPersistence, SessionState
+
+
+# Global instances
+manager = SessionManager()
+persistence = SessionPersistence()
+
+
+@click.group()
+@click.version_option(version="1.0.0")
+def cli():
+    """Thalos Prime Agent Session Management CLI"""
+    pass
+
+
+@cli.command()
+@click.option('--metadata', '-m', help='Session metadata as JSON')
+def start(metadata):
+    """Start a new agent session"""
+    try:
+        metadata_dict = json.loads(metadata) if metadata else {}
+        session = manager.create_session(metadata_dict)
+        session = manager.start_session(session.session_id)
+        persistence.save_session(session)
+        
+        click.echo(f"✓ Session started: {session.session_id}")
+        click.echo(f"  State: {session.state.value}")
+        click.echo(f"  Created: {session.created_at}")
+    except Exception as e:
+        click.echo(f"✗ Error starting session: {e}", err=True)
+        sys.exit(1)
+
+
+@cli.command()
+@click.argument('session_id')
+def stop(session_id):
+    """Stop (terminate) an agent session"""
+    try:
+        session = manager.get_session(session_id)
+        if not session:
+            # Try loading from persistence
+            session = persistence.load_session(session_id)
+            if session:
+                manager._sessions[session_id] = session
+        
+        if not session:
+            click.echo(f"✗ Session {session_id} not found", err=True)
+            sys.exit(1)
+        
+        session = manager.terminate_session(session_id)
+        persistence.save_session(session)
+        
+        click.echo(f"✓ Session stopped: {session_id}")
+        click.echo(f"  Final state: {session.state.value}")
+    except Exception as e:
+        click.echo(f"✗ Error stopping session: {e}", err=True)
+        sys.exit(1)
+
+
+@cli.command()
+@click.argument('session_id')
+def pause(session_id):
+    """Pause a running agent session"""
+    try:
+        session = manager.get_session(session_id)
+        if not session:
+            session = persistence.load_session(session_id)
+            if session:
+                manager._sessions[session_id] = session
+        
+        if not session:
+            click.echo(f"✗ Session {session_id} not found", err=True)
+            sys.exit(1)
+        
+        session = manager.pause_session(session_id)
+        persistence.save_session(session)
+        
+        click.echo(f"✓ Session paused: {session_id}")
+        click.echo(f"  State: {session.state.value}")
+    except Exception as e:
+        click.echo(f"✗ Error pausing session: {e}", err=True)
+        sys.exit(1)
+
+
+@cli.command()
+@click.argument('session_id')
+def resume(session_id):
+    """Resume a paused agent session"""
+    try:
+        session = manager.get_session(session_id)
+        if not session:
+            session = persistence.load_session(session_id)
+            if session:
+                manager._sessions[session_id] = session
+        
+        if not session:
+            click.echo(f"✗ Session {session_id} not found", err=True)
+            sys.exit(1)
+        
+        session = manager.resume_session(session_id)
+        persistence.save_session(session)
+        
+        click.echo(f"✓ Session resumed: {session_id}")
+        click.echo(f"  State: {session.state.value}")
+    except Exception as e:
+        click.echo(f"✗ Error resuming session: {e}", err=True)
+        sys.exit(1)
+
+
+@cli.command()
+@click.argument('session_id')
+def status(session_id):
+    """Get status of an agent session"""
+    try:
+        session = manager.get_session(session_id)
+        if not session:
+            session = persistence.load_session(session_id)
+        
+        if not session:
+            click.echo(f"✗ Session {session_id} not found", err=True)
+            sys.exit(1)
+        
+        click.echo(f"Session: {session.session_id}")
+        click.echo(f"  State: {session.state.value}")
+        click.echo(f"  Created: {session.created_at}")
+        click.echo(f"  Updated: {session.updated_at}")
+        click.echo(f"  Transitions: {session.transition_count}")
+        
+        if session.metadata:
+            click.echo(f"  Metadata: {json.dumps(session.metadata, indent=4)}")
+        
+        if session.state_history:
+            click.echo(f"  History:")
+            for entry in session.state_history[-5:]:
+                click.echo(f"    {entry['from']} → {entry['to']} @ {entry['timestamp']}")
+    except Exception as e:
+        click.echo(f"✗ Error getting status: {e}", err=True)
+        sys.exit(1)
+
+
+@cli.command()
+@click.option('--state', '-s', help='Filter by state')
+def list(state):
+    """List all agent sessions"""
+    try:
+        # Load all sessions from persistence
+        stored_ids = persistence.list_stored_sessions()
+        for session_id in stored_ids:
+            session = persistence.load_session(session_id)
+            if session and session_id not in manager._sessions:
+                manager._sessions[session_id] = session
+        
+        state_filter = SessionState(state) if state else None
+        sessions = manager.list_sessions(state_filter)
+        
+        if not sessions:
+            click.echo("No sessions found")
+            return
+        
+        click.echo(f"Found {len(sessions)} session(s):")
+        for session in sessions:
+            click.echo(f"  {session.session_id}")
+            click.echo(f"    State: {session.state.value}")
+            click.echo(f"    Created: {session.created_at}")
+    except Exception as e:
+        click.echo(f"✗ Error listing sessions: {e}", err=True)
+        sys.exit(1)
+
+
+@cli.command()
+def cleanup():
+    """Cleanup terminated sessions"""
+    try:
+        # Cleanup from manager
+        count = manager.cleanup_terminated_sessions()
+        
+        # Cleanup old files
+        persistence.cleanup_old_sessions(max_age_days=30)
+        
+        click.echo(f"✓ Cleaned up {count} terminated session(s)")
+    except Exception as e:
+        click.echo(f"✗ Error during cleanup: {e}", err=True)
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    cli()
