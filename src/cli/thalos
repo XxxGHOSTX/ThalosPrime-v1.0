@@ -57,7 +57,7 @@ def stop(session_id):
             # Try loading from persistence
             session = persistence.load_session(session_id)
             if session:
-                manager._sessions[session_id] = session
+                manager.restore_session(session)
         
         if not session:
             click.echo(f"✗ Session {session_id} not found", err=True)
@@ -82,7 +82,7 @@ def pause(session_id):
         if not session:
             session = persistence.load_session(session_id)
             if session:
-                manager._sessions[session_id] = session
+                manager.restore_session(session)
         
         if not session:
             click.echo(f"✗ Session {session_id} not found", err=True)
@@ -107,7 +107,7 @@ def resume(session_id):
         if not session:
             session = persistence.load_session(session_id)
             if session:
-                manager._sessions[session_id] = session
+                manager.restore_session(session)
         
         if not session:
             click.echo(f"✗ Session {session_id} not found", err=True)
@@ -164,7 +164,7 @@ def list(state):
         for session_id in stored_ids:
             session = persistence.load_session(session_id)
             if session and session_id not in manager._sessions:
-                manager._sessions[session_id] = session
+                manager.restore_session(session)
         
         state_filter = SessionState(state) if state else None
         sessions = manager.list_sessions(state_filter)

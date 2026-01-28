@@ -53,6 +53,16 @@ class SessionManager:
         """
         return self._sessions.get(session_id)
     
+    def restore_session(self, session: AgentSession) -> None:
+        """
+        Restore a session to the manager (e.g., from persistence).
+        
+        Args:
+            session: AgentSession instance to restore
+        """
+        self._sessions[session.session_id] = session
+        self._log_operation("restore", session.session_id)
+    
     def start_session(self, session_id: str) -> AgentSession:
         """
         Start a session explicitly.

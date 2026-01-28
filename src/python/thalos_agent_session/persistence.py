@@ -7,9 +7,12 @@ All persistence operations are explicit and atomic.
 
 import json
 import os
+import logging
 from typing import Optional, Dict, Any
 from pathlib import Path
 from .session import AgentSession
+
+logger = logging.getLogger(__name__)
 
 
 class SessionPersistence:
@@ -54,8 +57,7 @@ class SessionPersistence:
             
             return True
         except Exception as e:
-            # In production, proper error handling would be implemented
-            print(f"Error saving session {session.session_id}: {e}")
+            logger.error(f"Error saving session {session.session_id}: {e}")
             return False
     
     def load_session(self, session_id: str) -> Optional[AgentSession]:
@@ -79,8 +81,7 @@ class SessionPersistence:
             
             return AgentSession.from_dict(session_data)
         except Exception as e:
-            # In production, proper error handling would be implemented
-            print(f"Error loading session {session_id}: {e}")
+            logger.error(f"Error loading session {session_id}: {e}")
             return None
     
     def delete_session(self, session_id: str) -> bool:
@@ -102,8 +103,7 @@ class SessionPersistence:
             
             return False
         except Exception as e:
-            # In production, proper error handling would be implemented
-            print(f"Error deleting session {session_id}: {e}")
+            logger.error(f"Error deleting session {session_id}: {e}")
             return False
     
     def list_stored_sessions(self) -> list:
@@ -117,7 +117,7 @@ class SessionPersistence:
             session_files = self.storage_path.glob("*.json")
             return [f.stem for f in session_files]
         except Exception as e:
-            print(f"Error listing sessions: {e}")
+            logger.error(f"Error listing sessions: {e}")
             return []
     
     def cleanup_old_sessions(self, max_age_days: int = 30) -> int:
@@ -144,6 +144,6 @@ class SessionPersistence:
                     session_file.unlink()
                     count += 1
         except Exception as e:
-            print(f"Error during cleanup: {e}")
+            logger.error(f"Error during cleanup: {e}")
         
         return count

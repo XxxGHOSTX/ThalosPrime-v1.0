@@ -56,11 +56,9 @@ setup(
             "mypy>=1.4.0",
         ],
     },
-    entry_points={
-        "console_scripts": [
-            "thalos=src.cli.thalos:cli",
-        ],
-    },
+    scripts=[
+        "src/cli/thalos",
+    ],
     include_package_data=True,
     zip_safe=False,
     keywords=[

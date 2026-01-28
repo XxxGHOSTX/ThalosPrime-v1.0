@@ -13,7 +13,6 @@ const SessionState = {
   INITIALIZED: 'initialized',
   RUNNING: 'running',
   PAUSED: 'paused',
-  RESUMING: 'resuming',
   TERMINATED: 'terminated',
   ERROR: 'error'
 };
@@ -37,9 +36,9 @@ class AgentSession {
    * Start the session
    */
   start() {
-    if (![SessionState.INITIALIZED, SessionState.PAUSED].includes(this.state)) {
+    if (this.state !== SessionState.INITIALIZED) {
       throw new Error(
-        `Cannot start session from state ${this.state}. Must be INITIALIZED or PAUSED.`
+        `Cannot start session from state ${this.state}. Must be INITIALIZED. Use resume() for paused sessions.`
       );
     }
     return this._transitionTo(SessionState.RUNNING);
@@ -83,15 +82,13 @@ class AgentSession {
    * Mark session as errored
    */
   markError(errorMessage) {
-    const newSession = this._transitionTo(SessionState.ERROR);
-    newSession.errorMessage = errorMessage;
-    return newSession;
+    return this._transitionTo(SessionState.ERROR, errorMessage);
   }
 
   /**
    * Internal transition method
    */
-  _transitionTo(newState) {
+  _transitionTo(newState, errorMessage = null) {
     const historyEntry = {
       from: this.state,
       to: newState,
@@ -104,7 +101,7 @@ class AgentSession {
       createdAt: this.createdAt,
       updatedAt: new Date(),
       metadata: { ...this.metadata },
-      errorMessage: this.errorMessage,
+      errorMessage: errorMessage !== null ? errorMessage : this.errorMessage,
       stateHistory: [...this.stateHistory, historyEntry],
       transitionCount: this.transitionCount + 1
     });

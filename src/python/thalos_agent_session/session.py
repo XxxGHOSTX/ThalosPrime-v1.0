@@ -17,7 +17,6 @@ class SessionState(Enum):
     INITIALIZED = "initialized"
     RUNNING = "running"
     PAUSED = "paused"
-    RESUMING = "resuming"
     TERMINATED = "terminated"
     ERROR = "error"
 
@@ -49,10 +48,10 @@ class AgentSession:
         Returns:
             New session instance with updated state (immutable operation).
         """
-        if self.state not in [SessionState.INITIALIZED, SessionState.PAUSED]:
+        if self.state != SessionState.INITIALIZED:
             raise ValueError(
                 f"Cannot start session from state {self.state}. "
-                f"Must be INITIALIZED or PAUSED."
+                f"Must be INITIALIZED. Use resume() for paused sessions."
             )
         
         return self._transition_to(SessionState.RUNNING)
@@ -109,11 +108,9 @@ class AgentSession:
         Returns:
             New session instance with error state (immutable operation).
         """
-        new_session = self._transition_to(SessionState.ERROR)
-        new_session.error_message = error_message
-        return new_session
+        return self._transition_to(SessionState.ERROR, error_message=error_message)
     
-    def _transition_to(self, new_state: SessionState) -> "AgentSession":
+    def _transition_to(self, new_state: SessionState, error_message: Optional[str] = None) -> "AgentSession":
         """
         Internal method for deterministic state transitions.
         
@@ -126,7 +123,7 @@ class AgentSession:
             created_at=self.created_at,
             updated_at=datetime.utcnow(),
             metadata=self.metadata.copy(),
-            error_message=self.error_message,
+            error_message=error_message if error_message is not None else self.error_message,
             state_history=self.state_history + [
                 {
                     "from": self.state.value,
