@@ -6,10 +6,15 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+permissions:
+  contents: read
+
 jobs:
   test-python:
     name: Python Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       matrix:
         python-version: ['3.9', '3.10', '3.11']
@@ -50,6 +55,8 @@ jobs:
   test-nodejs:
     name: Node.js Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       matrix:
         node-version: ['16.x', '18.x', '20.x']
@@ -74,6 +81,8 @@ jobs:
   lint:
     name: Code Quality
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
     - name: Checkout code
@@ -104,6 +113,8 @@ jobs:
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: [test-python, test-nodejs]
     
     steps:
@@ -135,6 +146,8 @@ jobs:
   security-scan:
     name: Security Scanning
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
     - name: Checkout code
@@ -156,6 +169,8 @@ jobs:
   build-status:
     name: Build Status
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: [test-python, test-nodejs, lint, integration-tests]
     if: always()
     
