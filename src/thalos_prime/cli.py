@@ -26,7 +26,7 @@ from thalos_prime.session import SessionManager, SessionState
 def main(ctx: click.Context, storage_dir: Path) -> None:
     """
     Thalos Prime - Deterministic AI Agent Session Management
-    
+
     Manage agent sessions with explicit control and deterministic behavior.
     """
     ctx.ensure_object(dict)
@@ -44,10 +44,12 @@ def session() -> None:
 @click.option("--name", help="Session name")
 @click.option("--config", help="Configuration JSON")
 @click.pass_context
-def session_start(ctx: click.Context, name: Optional[str], config: Optional[str]) -> None:
+def session_start(
+    ctx: click.Context, name: Optional[str], config: Optional[str]
+) -> None:
     """Start a new agent session."""
     manager: SessionManager = ctx.obj["manager"]
-    
+
     # Parse config if provided
     config_dict = None
     if config:
@@ -56,14 +58,14 @@ def session_start(ctx: click.Context, name: Optional[str], config: Optional[str]
         except json.JSONDecodeError:
             click.echo(f"Error: Invalid JSON config", err=True)
             sys.exit(1)
-    
+
     # Create and start session
     session = manager.create_session(name=name, config=config_dict)
     session.start()
-    
+
     # Save session
     manager.save_session(session.session_id)
-    
+
     click.echo(f"Started session: {session.session_id}")
     click.echo(f"Name: {session.name}")
     click.echo(f"State: {session.state.value}")
@@ -75,7 +77,7 @@ def session_start(ctx: click.Context, name: Optional[str], config: Optional[str]
 def session_stop(ctx: click.Context, session_id: str) -> None:
     """Stop (terminate) an agent session."""
     manager: SessionManager = ctx.obj["manager"]
-    
+
     # Load session if not in memory
     session = manager.get_session(session_id)
     if not session:
@@ -84,7 +86,7 @@ def session_stop(ctx: click.Context, session_id: str) -> None:
         except FileNotFoundError:
             click.echo(f"Error: Session {session_id} not found", err=True)
             sys.exit(1)
-    
+
     # Terminate session
     if session.is_terminated:
         click.echo(f"Session {session_id} is already terminated")
@@ -100,7 +102,7 @@ def session_stop(ctx: click.Context, session_id: str) -> None:
 def session_pause(ctx: click.Context, session_id: str) -> None:
     """Pause a running agent session."""
     manager: SessionManager = ctx.obj["manager"]
-    
+
     # Load session if not in memory
     session = manager.get_session(session_id)
     if not session:
@@ -109,7 +111,7 @@ def session_pause(ctx: click.Context, session_id: str) -> None:
         except FileNotFoundError:
             click.echo(f"Error: Session {session_id} not found", err=True)
             sys.exit(1)
-    
+
     # Pause session
     try:
         session.pause()
@@ -126,7 +128,7 @@ def session_pause(ctx: click.Context, session_id: str) -> None:
 def session_resume(ctx: click.Context, session_id: str) -> None:
     """Resume a paused agent session."""
     manager: SessionManager = ctx.obj["manager"]
-    
+
     # Load session if not in memory
     session = manager.get_session(session_id)
     if not session:
@@ -135,7 +137,7 @@ def session_resume(ctx: click.Context, session_id: str) -> None:
         except FileNotFoundError:
             click.echo(f"Error: Session {session_id} not found", err=True)
             sys.exit(1)
-    
+
     # Resume session
     try:
         session.resume()
@@ -149,7 +151,11 @@ def session_resume(ctx: click.Context, session_id: str) -> None:
 @session.command("status")
 @click.argument("session_id", required=False)
 @click.option("--all", "show_all", is_flag=True, help="Show all sessions")
-@click.option("--state", type=click.Choice([s.value for s in SessionState]), help="Filter by state")
+@click.option(
+    "--state",
+    type=click.Choice([s.value for s in SessionState]),
+    help="Filter by state",
+)
 @click.pass_context
 def session_status(
     ctx: click.Context,
@@ -159,41 +165,41 @@ def session_status(
 ) -> None:
     """Show status of agent sessions."""
     manager: SessionManager = ctx.obj["manager"]
-    
+
     # Load all sessions from storage
     manager.load_all()
-    
+
     if session_id:
         # Show specific session
         session = manager.get_session(session_id)
         if not session:
             click.echo(f"Error: Session {session_id} not found", err=True)
             sys.exit(1)
-        
+
         click.echo(f"Session ID: {session.session_id}")
         click.echo(f"Name: {session.name}")
         click.echo(f"State: {session.state.value}")
         click.echo(f"Created: {session._created_at.isoformat()}")
         click.echo(f"Updated: {session._updated_at.isoformat()}")
-        
+
     elif show_all or state:
         # List all sessions or filtered
         state_filter = SessionState(state) if state else None
         sessions = manager.list_sessions(state_filter=state_filter)
-        
+
         if not sessions:
             click.echo("No sessions found")
             return
-        
+
         click.echo(f"Found {len(sessions)} session(s):")
         click.echo()
-        
+
         for session in sessions:
             click.echo(f"  {session.session_id}")
             click.echo(f"    Name: {session.name}")
             click.echo(f"    State: {session.state.value}")
             click.echo()
-        
+
         # Show statistics
         stats = manager.get_statistics()
         click.echo("Statistics:")
@@ -201,27 +207,31 @@ def session_status(
             if state_name != "total":
                 click.echo(f"  {state_name}: {count}")
         click.echo(f"  Total: {stats['total']}")
-        
+
     else:
         click.echo("Error: Provide session_id or use --all to list sessions", err=True)
         sys.exit(1)
 
 
 @session.command("list")
-@click.option("--state", type=click.Choice([s.value for s in SessionState]), help="Filter by state")
+@click.option(
+    "--state",
+    type=click.Choice([s.value for s in SessionState]),
+    help="Filter by state",
+)
 @click.pass_context
 def session_list(ctx: click.Context, state: Optional[str]) -> None:
     """List all agent sessions."""
     manager: SessionManager = ctx.obj["manager"]
     manager.load_all()
-    
+
     state_filter = SessionState(state) if state else None
     sessions = manager.list_sessions(state_filter=state_filter)
-    
+
     if not sessions:
         click.echo("No sessions found")
         return
-    
+
     for session in sessions:
         click.echo(f"{session.session_id}\t{session.name}\t{session.state.value}")
 

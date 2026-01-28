@@ -1,0 +1,24 @@
+include README.md
+include LICENSE
+include CHANGELOG.md
+include CONTRIBUTING.md
+include CODE_OF_CONDUCT.md
+include SECURITY.md
+include pyproject.toml
+recursive-include src/thalos_prime *.py
+recursive-include src/thalos_prime py.typed
+recursive-include tests *.py
+recursive-include examples *.py
+recursive-include docs *.md *.rst
+recursive-include scripts *.py *.sh
+prune .git
+prune .github
+prune __pycache__
+prune *.egg-info
+exclude .gitignore
+exclude .coveragerc
+exclude tox.ini
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *~
+global-exclude .DS_Store

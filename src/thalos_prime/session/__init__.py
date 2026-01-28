@@ -11,7 +11,7 @@ from thalos_prime.session.lifecycle import SessionState, SessionLifecycle
 
 __all__ = [
     "SessionManager",
-    "AgentSession", 
+    "AgentSession",
     "SessionState",
     "SessionLifecycle",
 ]

@@ -7,7 +7,6 @@ Demonstrates various session configuration patterns.
 from pathlib import Path
 from thalos_prime import SessionManager
 
-
 # Configuration templates
 CONFIGS = {
     "gpt4_default": {
@@ -40,47 +39,46 @@ CONFIGS = {
 
 def main():
     """Run configuration example."""
-    
+
     print("Session Configuration Example")
     print("=" * 50)
-    
+
     manager = SessionManager(storage_dir=Path("examples/config_data"))
-    
+
     # Create sessions with different configs
     print("\n1. Creating sessions with different configurations...")
-    
+
     for config_name, config in CONFIGS.items():
-        session = manager.create_session(
-            name=f"session-{config_name}",
-            config=config
-        )
+        session = manager.create_session(name=f"session-{config_name}", config=config)
         session.start()
-        
+
         print(f"\n   {session.name}:")
         print(f"      Model: {config.get('model')}")
         print(f"      Temperature: {config.get('temperature')}")
         print(f"      Max Tokens: {config.get('max_tokens')}")
-        
+
         # Set appropriate subsystem states
         if config.get("codegen_mode"):
-            session.update_codegen_state({
-                "enabled": True,
-                "language": "python",
-                "style": "pep8",
-            })
+            session.update_codegen_state(
+                {
+                    "enabled": True,
+                    "language": "python",
+                    "style": "pep8",
+                }
+            )
             print(f"      CodeGen: Enabled")
-        
+
         manager.save_session(session.session_id)
-    
+
     # List all configurations
     print("\n2. All configured sessions:")
     all_sessions = manager.list_sessions()
-    
+
     for session in all_sessions:
         print(f"\n   {session.name}:")
         print(f"      Config: {session.config}")
         print(f"      State: {session.state.value}")
-    
+
     print("\n✅ Configuration example completed!")
 
 
