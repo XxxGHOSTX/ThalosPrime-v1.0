@@ -1,0 +1,33 @@
+---
+# PersistentVolumeClaim for session storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: thalos-sessions-pvc
+  namespace: thalos-prime
+  labels:
+    app: thalos-prime
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+
+---
+# PersistentVolumeClaim for logs
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: thalos-logs-pvc
+  namespace: thalos-prime
+  labels:
+    app: thalos-prime
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard

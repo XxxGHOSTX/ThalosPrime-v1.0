@@ -1,0 +1,39 @@
+---
+# ConfigMap for Thalos Prime configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thalos-prime-config
+  namespace: thalos-prime
+  labels:
+    app: thalos-prime
+data:
+  # Thalos Prime configuration
+  THALOS_LOG_LEVEL: "INFO"
+  THALOS_SESSION_DIR: "/app/.thalos/sessions"
+  THALOS_LOG_DIR: "/app/logs"
+  PYTHONUNBUFFERED: "1"
+  
+  # Production configuration file
+  production.yaml: |
+    thalos:
+      version: "1.0.0"
+      
+      session:
+        storage_dir: "/app/.thalos/sessions"
+        backup_enabled: true
+        backup_interval: 3600
+        max_sessions: 1000
+      
+      logging:
+        level: "INFO"
+        directory: "/app/logs"
+        format: "json"
+        max_size_mb: 100
+        backup_count: 10
+      
+      api:
+        enabled: true
+        host: "0.0.0.0"
+        port: 8000
+        cors_enabled: true

@@ -1,0 +1,93 @@
+# Docker Compose for Thalos Prime v1.0
+# Provides orchestration for Thalos Prime services
+
+version: '3.8'
+
+services:
+  thalos-prime:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: thalos-prime:1.0.0
+    container_name: thalos-prime
+    restart: unless-stopped
+    
+    environment:
+      - PYTHONUNBUFFERED=1
+      - THALOS_HOME=/app
+      - THALOS_SESSION_DIR=/app/.thalos/sessions
+      - THALOS_LOG_DIR=/app/logs
+      - THALOS_LOG_LEVEL=INFO
+    
+    volumes:
+      # Persistent storage for sessions
+      - thalos-sessions:/app/.thalos/sessions
+      - thalos-logs:/app/logs
+      # Mount local config (optional)
+      # - ./config:/app/config:ro
+    
+    ports:
+      # API port (when implemented)
+      - "8000:8000"
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import thalos_prime; print('healthy')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    # Run interactive shell by default
+    command: /bin/bash
+    
+    networks:
+      - thalos-network
+
+  # Future: Redis for session caching
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: thalos-redis
+  #   restart: unless-stopped
+  #   volumes:
+  #     - redis-data:/data
+  #   networks:
+  #     - thalos-network
+
+  # Future: PostgreSQL for persistent storage
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: thalos-postgres
+  #   restart: unless-stopped
+  #   environment:
+  #     - POSTGRES_USER=thalos
+  #     - POSTGRES_PASSWORD=thalos_secure_password
+  #     - POSTGRES_DB=thalos_prime
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   networks:
+  #     - thalos-network
+
+volumes:
+  thalos-sessions:
+    driver: local
+  thalos-logs:
+    driver: local
+  # redis-data:
+  #   driver: local
+  # postgres-data:
+  #   driver: local
+
+networks:
+  thalos-network:
+    driver: bridge
