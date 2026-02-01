@@ -14,7 +14,12 @@ from pathlib import Path
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent / "python"))
 
-from thalos_agent_session import SessionManager, SessionPersistence, SessionState
+from thalos_agent_session import (
+    SessionManager,
+    SessionPersistence,
+    SessionState,
+    SyntheticBiologicalIntelligence,
+)
 
 # Global instances
 manager = SessionManager()
@@ -210,6 +215,113 @@ def cleanup():
     except Exception as e:
         click.echo(f"✗ Error during cleanup: {e}", err=True)
         sys.exit(1)
+
+
+@cli.command()
+@click.argument("query", nargs=-1, required=False)
+@click.option("--interactive", "-i", is_flag=True, help="Enter interactive mode")
+def sbi(query, interactive):
+    """
+    Interact with the SBI (Synthetic Biological Intelligence) interface.
+    
+    Use natural language to interact with the system. Examples:
+    - thalos sbi "create a new session"
+    - thalos sbi "what is the system status?"
+    - thalos sbi "hello, how are you?"
+    - thalos sbi -i  (interactive mode)
+    """
+    # Initialize SBI
+    sbi_interface = SyntheticBiologicalIntelligence(
+        session_manager=manager,
+        persistence=persistence,
+    )
+    
+    if interactive:
+        # Interactive mode
+        click.echo("🧠 Thalos Prime SBI Interactive Mode")
+        click.echo("=" * 50)
+        click.echo("Type your queries in natural language.")
+        click.echo("Type 'exit', 'quit', or 'bye' to leave.\n")
+        
+        while True:
+            try:
+                user_input = click.prompt("You", type=str, prompt_suffix="> ")
+                
+                if user_input.lower() in ["exit", "quit", "bye", "q"]:
+                    click.echo("\n👋 Goodbye! SBI interface closed.")
+                    break
+                
+                # Process input through SBI
+                result = sbi_interface.interpret_and_execute(user_input)
+                
+                # Display response
+                click.echo(f"\n🧠 SBI: {result.get('message', 'Processed.')}")
+                
+                # Show additional info if available
+                if "response" in result:
+                    click.echo(f"    {result['response']}")
+                
+                if result.get("success") and "session_id" in result:
+                    click.echo(f"    Session ID: {result['session_id']}")
+                
+                if "suggestions" in result:
+                    click.echo("\n    Suggestions:")
+                    for suggestion in result["suggestions"][:3]:
+                        click.echo(f"    - {suggestion}")
+                
+                click.echo()  # Empty line for readability
+                
+            except KeyboardInterrupt:
+                click.echo("\n\n👋 Interrupted. Exiting SBI interface.")
+                break
+            except EOFError:
+                click.echo("\n\n👋 EOF received. Exiting SBI interface.")
+                break
+    
+    elif query:
+        # Single query mode
+        query_text = " ".join(query)
+        
+        # Process through SBI
+        result = sbi_interface.interpret_and_execute(query_text)
+        
+        # Display formatted response
+        click.echo(f"\n🧠 SBI Response:")
+        click.echo(f"   {result.get('message', 'No message')}")
+        
+        if "response" in result:
+            click.echo(f"\n   {result['response']}")
+        
+        if result.get("success"):
+            if "session_id" in result:
+                click.echo(f"\n   ✓ Session ID: {result['session_id']}")
+                click.echo(f"   ✓ State: {result.get('state', 'unknown')}")
+            
+            if "sessions" in result:
+                click.echo(f"\n   Sessions found: {result['count']}")
+                for session in result["sessions"][:5]:
+                    click.echo(f"   - {session['session_id']} ({session['state']})")
+        
+        if "suggestions" in result:
+            click.echo("\n   💡 Suggestions:")
+            for suggestion in result["suggestions"][:3]:
+                click.echo(f"   - {suggestion}")
+        
+        if not result.get("success", True):
+            click.echo(f"\n   ⚠ Note: {result.get('error', 'See message above')}")
+    
+    else:
+        # No query provided - show help
+        click.echo("🧠 Thalos Prime SBI Interface\n")
+        click.echo("Usage:")
+        click.echo("  thalos sbi 'your natural language query'")
+        click.echo("  thalos sbi -i  (interactive mode)\n")
+        click.echo("Examples:")
+        click.echo("  thalos sbi 'create a new session'")
+        click.echo("  thalos sbi 'what is the system status?'")
+        click.echo("  thalos sbi 'hello, how are you?'")
+        click.echo("  thalos sbi 'show me all sessions'")
+        click.echo("  thalos sbi 'remember this important data'")
 
 
 if __name__ == "__main__":

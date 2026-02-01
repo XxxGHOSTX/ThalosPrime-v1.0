@@ -11,5 +11,18 @@ __author__ = "Thalos Prime Team"
 from .session import AgentSession, SessionState
 from .manager import SessionManager
 from .persistence import SessionPersistence
+from .sbi_interface import (
+    SyntheticBiologicalIntelligence,
+    IntentType,
+    NeuralProcessingLayer,
+)
 
-__all__ = ["AgentSession", "SessionState", "SessionManager", "SessionPersistence"]
+__all__ = [
+    "AgentSession",
+    "SessionState",
+    "SessionManager",
+    "SessionPersistence",
+    "SyntheticBiologicalIntelligence",
+    "IntentType",
+    "NeuralProcessingLayer",
+]
