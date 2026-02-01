@@ -25,6 +25,7 @@ source venv/bin/activate
 ## ✨ Key Features
 
 - 🎯 **Deterministic Architecture** - Reproducible and traceable operations
+- 🧠 **SBI Interface** - Natural language interaction with ANY input support
 - 🔄 **Session Lifecycle Management** - Start, pause, resume, terminate
 - 💾 **Persistent Storage** - Atomic session state persistence
 - 🧠 **Memory Subsystem** - Working, episodic, and semantic memory
@@ -32,6 +33,28 @@ source venv/bin/activate
 - 🔨 **Code Generation** - Template-based deterministic code generation
 - 🖥️ **Dual Implementation** - Python and Node.js APIs
 - 📦 **Full Automation** - CI/CD, testing, and release automation
+
+## 🧠 SBI (Synthetic Biological Intelligence) Interface
+
+Interact with Thalos Prime using natural language! The SBI interface responds to ANY input:
+
+```bash
+# Natural language commands
+./src/cli/thalos sbi "create a new session"
+./src/cli/thalos sbi "what can you do?"
+./src/cli/thalos sbi "hello, how are you?"
+
+# Interactive mode
+./src/cli/thalos sbi -i
+```
+
+**The SBI interface understands:**
+- Commands: "create a session", "pause agent", "show status"
+- Questions: "what is SBI?", "how does this work?"
+- Greetings: "hello", "thanks", "help me"
+- ANY general input - always gets a relevant response!
+
+See [SBI Documentation](docs/SBI_INTERFACE.md) for details.
 
 ## 📖 Documentation
 
@@ -42,14 +65,19 @@ source venv/bin/activate
 ## 🎮 CLI Usage
 
 ```bash
-# Session management
-./src/cli/thalos start                    # Start new session
-./src/cli/thalos status <session-id>      # Get session status
-./src/cli/thalos pause <session-id>       # Pause session
-./src/cli/thalos resume <session-id>      # Resume session
-./src/cli/thalos stop <session-id>        # Stop session
-./src/cli/thalos list                     # List all sessions
-./src/cli/thalos cleanup                  # Cleanup terminated sessions
+# SBI Natural Language Interface (NEW!)
+./src/cli/thalos sbi "create a session"     # Natural language command
+./src/cli/thalos sbi "what can you do?"     # Ask questions
+./src/cli/thalos sbi -i                     # Interactive mode
+
+# Traditional Session management
+./src/cli/thalos start                      # Start new session
+./src/cli/thalos status <session-id>        # Get session status
+./src/cli/thalos pause <session-id>         # Pause session
+./src/cli/thalos resume <session-id>        # Resume session
+./src/cli/thalos stop <session-id>          # Stop session
+./src/cli/thalos list                       # List all sessions
+./src/cli/thalos cleanup                    # Cleanup terminated sessions
 ```
 
 ## 🔬 Architecture
