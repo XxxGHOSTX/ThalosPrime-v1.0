@@ -6,7 +6,7 @@ All memory operations are explicit and support session persistence.
 """
 
 from typing import Dict, Any, Optional, List
-from datetime import datetime
+from datetime import datetime, UTC
 from collections import OrderedDict
 
 
@@ -59,7 +59,7 @@ class MemorySubsystem:
             "key": key,
             "value": value,
             "metadata": metadata or {},
-            "stored_at": datetime.utcnow().isoformat()
+            "stored_at": datetime.now(UTC).isoformat()
         }
         
         # Create session memory space if needed
@@ -123,7 +123,7 @@ class MemorySubsystem:
         episode_item = {
             "session_id": session_id,
             "episode": episode,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(UTC).isoformat()
         }
         
         self.episodic_memory.append(episode_item)
@@ -169,7 +169,7 @@ class MemorySubsystem:
         """
         self.semantic_memory[key] = {
             "concept": concept,
-            "stored_at": datetime.utcnow().isoformat()
+            "stored_at": datetime.now(UTC).isoformat()
         }
         
         return True
@@ -204,7 +204,7 @@ class MemorySubsystem:
             "session_id": session_id,
             "working_memory": self.session_memory.get(session_id, {}),
             "episodic_memory": self.retrieve_episodic_memory(session_id),
-            "snapshot_time": datetime.utcnow().isoformat()
+            "snapshot_time": datetime.now(UTC).isoformat()
         }
     
     def clear_session_memory(self, session_id: str) -> bool:

@@ -6,7 +6,7 @@ All state changes are atomic and traceable.
 """
 
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Optional, Dict, Any
 from dataclasses import dataclass, field
 from uuid import uuid4
@@ -32,8 +32,8 @@ class AgentSession:
     
     session_id: str = field(default_factory=lambda: str(uuid4()))
     state: SessionState = SessionState.INITIALIZED
-    created_at: datetime = field(default_factory=datetime.utcnow)
-    updated_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     metadata: Dict[str, Any] = field(default_factory=dict)
     error_message: Optional[str] = None
     
@@ -121,14 +121,14 @@ class AgentSession:
             session_id=self.session_id,
             state=new_state,
             created_at=self.created_at,
-            updated_at=datetime.utcnow(),
+            updated_at=datetime.now(UTC),
             metadata=self.metadata.copy(),
             error_message=error_message if error_message is not None else self.error_message,
             state_history=self.state_history + [
                 {
                     "from": self.state.value,
                     "to": new_state.value,
-                    "timestamp": datetime.utcnow().isoformat()
+                    "timestamp": datetime.now(UTC).isoformat()
                 }
             ],
             transition_count=self.transition_count + 1

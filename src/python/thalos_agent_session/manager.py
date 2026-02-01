@@ -6,7 +6,7 @@ Provides centralized session lifecycle control and monitoring.
 """
 
 from typing import Dict, Optional, List
-from datetime import datetime
+from datetime import datetime, UTC
 from .session import AgentSession, SessionState
 
 
@@ -228,7 +228,7 @@ class SessionManager:
         self._operation_log.append({
             "operation": operation,
             "target": target,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(UTC).isoformat()
         })
     
     def get_operation_log(self) -> List[Dict]:

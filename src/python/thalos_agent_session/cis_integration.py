@@ -6,7 +6,7 @@ All communications are explicit and traceable.
 """
 
 from typing import Dict, Any, Optional, List
-from datetime import datetime
+from datetime import datetime, UTC
 from .session import AgentSession, SessionState
 
 
@@ -42,7 +42,7 @@ class CISIntegration:
             "type": "session_registration",
             "session_id": session.session_id,
             "state": session.state.value,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "metadata": session.metadata
         }
         
@@ -77,7 +77,7 @@ class CISIntegration:
             "session_id": session.session_id,
             "old_state": old_state.value,
             "new_state": new_state.value,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(UTC).isoformat()
         }
         
         self._log_message("state_change", message)
@@ -106,7 +106,7 @@ class CISIntegration:
             "type": "decision_request",
             "session_id": session.session_id,
             "context": decision_context,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(UTC).isoformat()
         }
         
         self._log_message("decision_request", message)
@@ -138,7 +138,7 @@ class CISIntegration:
             "type": "metrics_report",
             "session_id": session.session_id,
             "metrics": metrics,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(UTC).isoformat()
         }
         
         self._log_message("metrics", message)
@@ -156,7 +156,7 @@ class CISIntegration:
         self.message_log.append({
             "message_type": message_type,
             "message": message,
-            "logged_at": datetime.utcnow().isoformat()
+            "logged_at": datetime.now(UTC).isoformat()
         })
     
     def get_message_log(self) -> List[Dict[str, Any]]:

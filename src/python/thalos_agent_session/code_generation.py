@@ -6,7 +6,7 @@ All code generation is explicit, traceable, and reproducible.
 """
 
 from typing import Dict, Any, Optional, List
-from datetime import datetime
+from datetime import datetime, UTC
 import hashlib
 
 
@@ -77,7 +77,7 @@ class CodeGenerationModule:
             "code": generated,
             "hash": code_hash,
             "parameters": parameters,
-            "generated_at": datetime.utcnow().isoformat()
+            "generated_at": datetime.now(UTC).isoformat()
         }
         
         # Store generated code
@@ -110,7 +110,7 @@ class CodeGenerationModule:
             "language": language,
             "errors": [],
             "warnings": [],
-            "validated_at": datetime.utcnow().isoformat()
+            "validated_at": datetime.now(UTC).isoformat()
         }
         
         # Simple checks
@@ -188,7 +188,7 @@ class CodeGenerationModule:
             "scaffold_type": scaffold_type,
             "scaffold": scaffold,
             "config": config,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.now(UTC).isoformat()
         }
     
     def _create_module_scaffold(self, config: Dict[str, Any]) -> Dict[str, str]:
@@ -240,7 +240,7 @@ class CodeGenerationModule:
             "session_id": session_id,
             "template_name": template_name,
             "code_hash": code_hash,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(UTC).isoformat()
         })
     
     def get_generation_log(
