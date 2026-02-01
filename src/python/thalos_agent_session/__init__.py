@@ -12,9 +12,4 @@ from .session import AgentSession, SessionState
 from .manager import SessionManager
 from .persistence import SessionPersistence
 
-__all__ = [
-    "AgentSession",
-    "SessionState", 
-    "SessionManager",
-    "SessionPersistence"
-]
+__all__ = ["AgentSession", "SessionState", "SessionManager", "SessionPersistence"]
