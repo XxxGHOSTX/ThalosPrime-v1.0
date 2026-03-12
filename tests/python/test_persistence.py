@@ -8,7 +8,9 @@ import pytest
 import sys
 import tempfile
 import shutil
+import time
 from pathlib import Path
+from unittest.mock import patch, MagicMock
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src" / "python"))
@@ -128,3 +130,82 @@ class TestSessionPersistence:
         assert len(loaded.state_history) == 3
         assert loaded.transition_count == 3
         assert loaded.metadata["key"] == "value"
+
+    def test_save_session_handles_exception(self, temp_storage):
+        """Test that save_session handles filesystem errors gracefully."""
+        persistence = SessionPersistence(temp_storage)
+        session = AgentSession()
+
+        with patch("builtins.open", side_effect=OSError("Permission denied")):
+            result = persistence.save_session(session)
+
+        assert result is False
+
+    def test_load_session_handles_corrupt_json(self, temp_storage):
+        """Test that load_session handles corrupt JSON gracefully."""
+        persistence = SessionPersistence(temp_storage)
+        session = AgentSession()
+
+        # Write corrupt JSON
+        session_file = Path(temp_storage) / f"{session.session_id}.json"
+        session_file.write_text("{ invalid json }")
+
+        loaded = persistence.load_session(session.session_id)
+        assert loaded is None
+
+    def test_delete_session_handles_exception(self, temp_storage):
+        """Test that delete_session handles filesystem errors gracefully."""
+        persistence = SessionPersistence(temp_storage)
+        session = AgentSession()
+
+        persistence.save_session(session)
+
+        with patch.object(Path, "unlink", side_effect=OSError("Permission denied")):
+            result = persistence.delete_session(session.session_id)
+
+        assert result is False
+
+    def test_list_stored_sessions_handles_exception(self, temp_storage):
+        """Test that list_stored_sessions handles errors gracefully."""
+        persistence = SessionPersistence(temp_storage)
+
+        with patch.object(Path, "glob", side_effect=OSError("Permission denied")):
+            result = persistence.list_stored_sessions()
+
+        assert result == []
+
+    def test_cleanup_old_sessions(self, temp_storage):
+        """Test that cleanup_old_sessions removes files older than max_age_days."""
+        persistence = SessionPersistence(temp_storage)
+        session = AgentSession()
+
+        persistence.save_session(session)
+
+        # Patch time.time to simulate the file is old
+        session_file = Path(temp_storage) / f"{session.session_id}.json"
+        # The file was just created, so we simulate a max_age_days=0
+        removed = persistence.cleanup_old_sessions(max_age_days=0)
+
+        assert removed >= 1
+        assert not session_file.exists()
+
+    def test_cleanup_old_sessions_keeps_recent(self, temp_storage):
+        """Test that cleanup_old_sessions keeps recent files."""
+        persistence = SessionPersistence(temp_storage)
+        session = AgentSession()
+
+        persistence.save_session(session)
+
+        # Clean up with a large max_age (30 days) - file should NOT be removed
+        removed = persistence.cleanup_old_sessions(max_age_days=30)
+
+        assert removed == 0
+
+    def test_cleanup_old_sessions_handles_exception(self, temp_storage):
+        """Test that cleanup_old_sessions handles errors gracefully."""
+        persistence = SessionPersistence(temp_storage)
+
+        with patch.object(Path, "glob", side_effect=OSError("Permission denied")):
+            count = persistence.cleanup_old_sessions()
+
+        assert count == 0
