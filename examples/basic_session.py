@@ -5,7 +5,7 @@ Demonstrates creating, managing, and persisting agent sessions.
 """
 
 from pathlib import Path
-from thalos_prime import SessionManager, SessionState
+from thalos_prime import SessionManager
 
 
 def main():
