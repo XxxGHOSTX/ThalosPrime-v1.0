@@ -6,9 +6,8 @@ All persistence operations are explicit and atomic.
 """
 
 import json
-import os
 import logging
-from typing import Optional, Dict, Any
+from typing import Optional
 from pathlib import Path
 from .session import AgentSession
 

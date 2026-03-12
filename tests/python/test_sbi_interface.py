@@ -4,7 +4,6 @@ Test suite for SBI (Synthetic Biological Intelligence) Interface
 Tests the natural language processing and task execution capabilities.
 """
 
-import pytest
 import sys
 from pathlib import Path
 
@@ -14,8 +13,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src" / "python"))
 from thalos_agent_session import (
     SyntheticBiologicalIntelligence,
     IntentType,
-    SessionManager,
-    SessionPersistence,
 )
 
 
@@ -73,7 +70,7 @@ class TestSBIInterface:
         # Create a session first
         create_result = sbi.interpret_and_execute("start a session")
         assert create_result["success"] is True
-        session_id = create_result["session_id"]
+        _ = create_result["session_id"]  # Session created but ID not needed for this test
         
         # Query all sessions
         query_result = sbi.interpret_and_execute("show me all sessions")

@@ -57,7 +57,7 @@ def session_start(
         try:
             config_dict = json.loads(config)
         except json.JSONDecodeError:
-            click.echo(f"Error: Invalid JSON config", err=True)
+            click.echo("Error: Invalid JSON config", err=True)
             sys.exit(1)
 
     # Create and start session

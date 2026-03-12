@@ -5,7 +5,7 @@ Provides deterministic integration between agent sessions and the CIS.
 All communications are explicit and traceable.
 """
 
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, List
 from datetime import datetime, UTC
 from .session import AgentSession, SessionState
 
