@@ -1,0 +1,13 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: thalos-prime-pdb
+  namespace: thalos-prime
+  labels:
+    app: thalos-prime
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: thalos-prime
+      component: session-manager

@@ -15,7 +15,6 @@ from typing import Dict, Any, Optional, List, Tuple
 from datetime import datetime, UTC
 from enum import Enum
 
-from .session import AgentSession, SessionState
 from .manager import SessionManager
 from .persistence import SessionPersistence
 from .memory_subsystem import MemorySubsystem
@@ -72,6 +71,7 @@ class NeuralProcessingLayer:
             IntentType.SESSION_CONTROL: [
                 r"\b(pause|stop|resume|terminate|end|halt|kill)\b.*\b(session|agent)\b",
                 r"\b(session|agent)\b.*\b(pause|stop|resume|terminate|end)\b",
+                r"\b(pause|stop|resume|terminate|end|halt|kill)\b.*[a-f0-9]{8}-[a-f0-9]{4}",  # Action with UUID
             ],
             IntentType.SESSION_QUERY: [
                 r"\b(status|state|info|information|details)\b.*\b(session|agent)\b",
@@ -86,14 +86,17 @@ class NeuralProcessingLayer:
                 r"\b(generate|create|write|build|code|program)\b.*\b(code|function|class|module|script)\b",
                 r"\b(code|program|script)\b.*\b(generate|create|write)\b",
             ],
+            IntentType.SYSTEM_STATUS: [
+                r"\bsystem\b.*\bstatus\b",
+                r"\bsystem\b.*\bstate\b",
+                r"\bhealth\b.*\bstatus\b",
+                r"\bstatus\b.*\bsystem\b",
+                r"\b(how|what).*(system|systems)\b.*(doing|working|performing|running|status)\b",
+            ],
             IntentType.INFORMATION_QUERY: [
                 r"\b(what|how|why|when|where|who)\b.*\b(is|are|does|can|will|should)\b",
                 r"\b(explain|describe|tell me|teach me)\b",
                 r"\b(define|definition|meaning)\b",
-            ],
-            IntentType.SYSTEM_STATUS: [
-                r"\b(system|health|status|performance)\b.*\b(check|status|state)\b",
-                r"\b(how)\b.*\b(doing|working|performing|running)\b",
             ],
             IntentType.GENERAL_CONVERSATION: [
                 r"\b(thank|thanks|appreciate|awesome|cool|nice|great)\b",
@@ -646,7 +649,7 @@ class SyntheticBiologicalIntelligence:
         # Default: acknowledge input and offer guidance
         return {
             "success": True,
-            "action": "general_acknowledgment", 
+            "action": "general_acknowledgment",
             "message": f"I received your input: '{input_text}'. I'm designed to understand natural language and can help with various tasks.",
             "suggestions": [
                 "Ask me about the system or sessions",

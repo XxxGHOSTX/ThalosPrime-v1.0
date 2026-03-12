@@ -1,0 +1,26 @@
+# Session configuration for example scripts
+# 
+# This file provides example configuration presets for Thalos Prime sessions
+
+# Default session configuration
+session_config:
+  model: gpt-4
+  temperature: 0.7
+  max_tokens: 2048
+
+# CIS (Control and Integration System) configuration
+cis_config:
+  mode: autonomous
+  priority: high
+  timeout: 300
+
+# Memory subsystem configuration
+memory_config:
+  context_window: 8192
+  cache_enabled: true
+
+# CodeGen subsystem configuration
+codegen_config:
+  language: python
+  style: pep8
+  type_hints: true

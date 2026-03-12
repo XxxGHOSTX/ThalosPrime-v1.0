@@ -1,0 +1,9 @@
+---
+# Namespace for Thalos Prime
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: thalos-prime
+  labels:
+    app: thalos-prime
+    version: "1.0.0"

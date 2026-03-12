@@ -1,0 +1,53 @@
+{
+  "session_id": "3e128bbb-77b3-4660-aa0d-ed794740a008",
+  "name": "example-session",
+  "config": {
+    "model": "gpt-4",
+    "temperature": 0.7,
+    "max_tokens": 2048
+  },
+  "lifecycle": {
+    "current_state": "terminated",
+    "state_history": [
+      {
+        "state": "initialized",
+        "timestamp": "2026-01-28T02:48:07.800421"
+      },
+      {
+        "state": "running",
+        "timestamp": "2026-01-28T02:48:07.800432"
+      },
+      {
+        "state": "paused",
+        "timestamp": "2026-01-28T02:48:07.800443"
+      },
+      {
+        "state": "resumed",
+        "timestamp": "2026-01-28T02:48:07.800672"
+      },
+      {
+        "state": "running",
+        "timestamp": "2026-01-28T02:48:07.800673"
+      },
+      {
+        "state": "terminated",
+        "timestamp": "2026-01-28T02:48:07.800697"
+      }
+    ]
+  },
+  "created_at": "2026-01-28T02:48:07.800424",
+  "updated_at": "2026-01-28T02:48:07.800698",
+  "cis_state": {
+    "mode": "autonomous",
+    "priority": "high",
+    "timeout": 300
+  },
+  "memory_state": {
+    "context_window": 8192,
+    "cache_enabled": true
+  },
+  "codegen_state": {
+    "language": "python",
+    "style": "pep8"
+  }
+}

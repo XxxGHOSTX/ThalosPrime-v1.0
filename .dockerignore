@@ -1,0 +1,70 @@
+# .dockerignore - Exclude unnecessary files from Docker image
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.hypothesis/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation build
+docs/_build/
+site/
+
+# Thalos specific
+.thalos/
+*.session
+logs/
+*.log
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Development
+*.md
+!README.md
+!LICENSE
+Makefile
+.editorconfig
+.flake8
+.coveragerc
+
+# Environment
+.env
+.env.local
+venv/
+env/
+ENV/
+
+# Temporary
+tmp/
+temp/
+*.tmp
+*.bak

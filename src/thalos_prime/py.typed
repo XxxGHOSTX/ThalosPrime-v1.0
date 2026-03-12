@@ -1,0 +1,3 @@
+# PEP 561 marker file for type information
+# This file marks the thalos_prime package as type-checked
+# and allows mypy to use the inline type hints

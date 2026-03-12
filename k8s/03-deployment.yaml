@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thalos-prime
+  namespace: thalos-prime
+  labels:
+    app: thalos-prime
+    component: session-manager
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: thalos-prime
+      component: session-manager
+  template:
+    metadata:
+      labels:
+        app: thalos-prime
+        component: session-manager
+    spec:
+      serviceAccountName: thalos-prime
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      - name: thalos-prime
+        image: thalos-prime:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        env:
+        - name: THALOS_STORAGE_DIR
+          value: /data/sessions
+        - name: THALOS_LOG_LEVEL
+          value: INFO
+        envFrom:
+        - configMapRef:
+            name: thalos-prime-config
+        volumeMounts:
+        - name: sessions
+          mountPath: /data/sessions
+        - name: logs
+          mountPath: /var/log/thalos
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          exec:
+            command:
+            - python
+            - -c
+            - "import thalos_prime; print('alive')"
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        readinessProbe:
+          exec:
+            command:
+            - python
+            - -c
+            - "import thalos_prime; print('ready')"
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: sessions
+        persistentVolumeClaim:
+          claimName: thalos-sessions-pvc
+      - name: logs
+        persistentVolumeClaim:
+          claimName: thalos-logs-pvc

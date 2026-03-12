@@ -1,0 +1,46 @@
+# Coverage configuration for Thalos Prime
+
+[run]
+source = src/thalos_prime
+omit =
+    */tests/*
+    */test_*.py
+    */__pycache__/*
+    */site-packages/*
+    */distutils/*
+
+[report]
+# Require 90% coverage
+fail_under = 90
+
+# Show missing lines
+show_missing = True
+
+# Exclude lines from coverage
+exclude_lines =
+    # Standard pragma
+    pragma: no cover
+    
+    # Don't complain about missing debug code
+    def __repr__
+    
+    # Don't complain if tests don't hit defensive assertion code
+    raise AssertionError
+    raise NotImplementedError
+    
+    # Don't complain if non-runnable code isn't run
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    
+    # Don't complain about abstract methods
+    @abstractmethod
+    @abc.abstractmethod
+    
+    # Don't complain about ellipsis
+    \.\.\.
+
+[html]
+directory = htmlcov
+
+[xml]
+output = coverage.xml

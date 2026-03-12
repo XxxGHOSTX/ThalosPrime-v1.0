@@ -23,8 +23,8 @@ setup(
         "Documentation": "https://github.com/XxxGHOSTX/ThalosPrime-v1.0/blob/main/docs/README.md",
         "Source Code": "https://github.com/XxxGHOSTX/ThalosPrime-v1.0",
     },
-    packages=find_packages(where="src/python"),
-    package_dir={"": "src/python"},
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
@@ -37,28 +37,25 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.9",
+    python_requires=">=3.8",
     install_requires=[
-        "pydantic>=2.0.0",
-        "python-dotenv>=1.0.0",
-        "click>=8.1.0",
+        "click>=8.0.0",
         "pyyaml>=6.0",
-        "redis>=5.0.0",
-        "psutil>=5.9.0",
     ],
     extras_require={
         "dev": [
-            "pytest>=7.4.0",
-            "pytest-asyncio>=0.21.0",
-            "pytest-cov>=4.1.0",
+            "pytest>=7.0.0",
+            "pytest-cov>=4.0.0",
             "black>=23.0.0",
             "flake8>=6.0.0",
-            "mypy>=1.4.0",
+            "mypy>=1.0.0",
         ],
     },
-    scripts=[
-        "src/cli/thalos",
-    ],
+    entry_points={
+        "console_scripts": [
+            "thalos=thalos_prime.cli:main",
+        ],
+    },
     include_package_data=True,
     zip_safe=False,
     keywords=[

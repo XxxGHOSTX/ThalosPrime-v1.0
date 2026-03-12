@@ -1,0 +1,18 @@
+{
+  "session_id": "454034ce-d759-4577-986f-3459b992a320",
+  "state": "running",
+  "created_at": "2026-02-02T03:54:17.925867+00:00",
+  "updated_at": "2026-02-02T03:54:17.925873+00:00",
+  "metadata": {
+    "created_via": "sbi_interface"
+  },
+  "error_message": null,
+  "state_history": [
+    {
+      "from": "initialized",
+      "to": "running",
+      "timestamp": "2026-02-02T03:54:17.925875+00:00"
+    }
+  ],
+  "transition_count": 1
+}

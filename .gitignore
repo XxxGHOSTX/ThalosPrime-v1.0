@@ -16,10 +16,25 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
 venv/
 ENV/
 env/
@@ -44,6 +59,16 @@ package-lock.json
 Thumbs.db
 
 # Thalos Prime specific
+.thalos/
+sessions/
+*.session
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
 logs/
 *.log
 session_data/

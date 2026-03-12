@@ -1,0 +1,34 @@
+# Thalos Prime - Development Dependencies
+# Install with: pip install -r requirements-dev.txt
+
+# Testing
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-xdist>=3.0.0
+coverage>=7.0.0
+
+# Code Quality
+black>=23.0.0
+flake8>=6.0.0
+flake8-docstrings>=1.7.0
+flake8-bugbear>=23.0.0
+isort>=5.12.0
+mypy>=1.0.0
+
+# Type Stubs
+types-PyYAML>=6.0.0
+types-requests>=2.28.0
+
+# Documentation
+sphinx>=5.0.0
+sphinx-rtd-theme>=1.2.0
+
+# Development Tools
+ipython>=8.0.0
+ipdb>=0.13.0
+pre-commit>=3.0.0
+
+# Build Tools
+build>=0.10.0
+twine>=4.0.0
+wheel>=0.40.0
