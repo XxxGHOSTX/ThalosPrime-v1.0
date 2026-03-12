@@ -11,11 +11,12 @@ from typing import Optional
 
 import click
 
+from thalos_prime import __version__
 from thalos_prime.session import SessionManager, SessionState
 
 
 @click.group()
-@click.version_option(version="1.0.0", prog_name="thalos")
+@click.version_option(version=__version__, prog_name="thalos")
 @click.option(
     "--storage-dir",
     type=click.Path(path_type=Path),
@@ -179,8 +180,8 @@ def session_status(
         click.echo(f"Session ID: {session.session_id}")
         click.echo(f"Name: {session.name}")
         click.echo(f"State: {session.state.value}")
-        click.echo(f"Created: {session._created_at.isoformat()}")
-        click.echo(f"Updated: {session._updated_at.isoformat()}")
+        click.echo(f"Created: {session.created_at.isoformat()}")
+        click.echo(f"Updated: {session.updated_at.isoformat()}")
 
     elif show_all or state:
         # List all sessions or filtered

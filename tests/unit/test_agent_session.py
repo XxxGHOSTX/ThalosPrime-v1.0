@@ -4,8 +4,6 @@ Tests for Agent Session Management
 Validates session creation, lifecycle, and persistence.
 """
 
-import json
-import pytest
 from pathlib import Path
 from thalos_prime.session import AgentSession, SessionState
 

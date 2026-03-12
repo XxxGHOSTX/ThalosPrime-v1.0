@@ -171,7 +171,7 @@ class TestSessionManager:
         s2.start()
         s2.pause()
 
-        s3 = manager.create_session(name="S3")
+        _ = manager.create_session(name="S3")  # Not used in stats check
 
         s4 = manager.create_session(name="S4")
         s4.start()

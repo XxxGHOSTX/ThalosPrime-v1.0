@@ -153,7 +153,10 @@ class SessionManager:
             self.save_session(session_id)
 
     def load_all(self) -> None:
-        """Load all sessions from persistent storage."""
+        """Load all sessions from persistent storage.
+        
+        Skips corrupted or invalid session files and logs errors.
+        """
         if not self.storage_dir.exists():
             return
 
@@ -161,9 +164,12 @@ class SessionManager:
             try:
                 session = AgentSession.load(session_file)
                 self._sessions[session.session_id] = session
-            except Exception:
-                # Skip corrupted session files
-                pass
+            except (json.JSONDecodeError, KeyError, ValueError) as e:
+                # Log specific errors for corrupted session files
+                print(f"Warning: Skipping corrupted session file {session_file.name}: {e}")
+            except Exception as e:
+                # Catch unexpected errors but still report them
+                print(f"Warning: Failed to load session {session_file.name}: {e}")
 
     def get_statistics(self) -> Dict[str, int]:
         """

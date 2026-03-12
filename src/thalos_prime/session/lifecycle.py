@@ -6,7 +6,7 @@ All state changes are explicit and reversible.
 """
 
 from enum import Enum
-from typing import Optional, Dict, Any
+from typing import Dict, Any, List, Tuple
 from datetime import datetime
 
 
@@ -32,7 +32,7 @@ class SessionLifecycle:
     """
 
     # Valid state transitions (explicit control)
-    VALID_TRANSITIONS: Dict[SessionState, list[SessionState]] = {
+    VALID_TRANSITIONS: Dict[SessionState, List[SessionState]] = {
         SessionState.INITIALIZED: [SessionState.RUNNING, SessionState.TERMINATED],
         SessionState.RUNNING: [
             SessionState.PAUSED,
@@ -53,7 +53,7 @@ class SessionLifecycle:
             initial_state: Starting state (default: INITIALIZED)
         """
         self._current_state = initial_state
-        self._state_history: list[tuple[SessionState, datetime]] = [
+        self._state_history: List[Tuple[SessionState, datetime]] = [
             (initial_state, datetime.now())
         ]
 
@@ -63,7 +63,7 @@ class SessionLifecycle:
         return self._current_state
 
     @property
-    def state_history(self) -> list[tuple[SessionState, datetime]]:
+    def state_history(self) -> List[Tuple[SessionState, datetime]]:
         """Get state transition history (read-only)."""
         return self._state_history.copy()
 

@@ -66,6 +66,16 @@ class AgentSession:
         """Check if session is terminated."""
         return self.state == SessionState.TERMINATED
 
+    @property
+    def created_at(self) -> datetime:
+        """Get session creation timestamp."""
+        return self._created_at
+
+    @property
+    def updated_at(self) -> datetime:
+        """Get session last update timestamp."""
+        return self._updated_at
+
     def start(self) -> None:
         """
         Start the session explicitly.
@@ -153,18 +163,18 @@ class AgentSession:
         Export session to dictionary (deterministic serialization).
 
         Returns:
-            Complete session state as dictionary
+            Complete session state as dictionary (deep copy)
         """
         return {
             "session_id": self.session_id,
             "name": self.name,
-            "config": self.config,
+            "config": self.config.copy() if self.config else {},
             "lifecycle": self._lifecycle.to_dict(),
             "created_at": self._created_at.isoformat(),
             "updated_at": self._updated_at.isoformat(),
-            "cis_state": self._cis_state,
-            "memory_state": self._memory_state,
-            "codegen_state": self._codegen_state,
+            "cis_state": self._cis_state.copy(),
+            "memory_state": self._memory_state.copy(),
+            "codegen_state": self._codegen_state.copy(),
         }
 
     @classmethod
@@ -181,20 +191,28 @@ class AgentSession:
         session = cls(
             session_id=data["session_id"],
             name=data["name"],
-            config=data["config"],
+            config=data.get("config", {}).copy() if data.get("config") else {},
         )
 
         session._created_at = datetime.fromisoformat(data["created_at"])
         session._updated_at = datetime.fromisoformat(data["updated_at"])
-        session._cis_state = data.get("cis_state", {})
-        session._memory_state = data.get("memory_state", {})
-        session._codegen_state = data.get("codegen_state", {})
+        session._cis_state = data.get("cis_state", {}).copy()
+        session._memory_state = data.get("memory_state", {}).copy()
+        session._codegen_state = data.get("codegen_state", {}).copy()
 
-        # Restore lifecycle state
+        # Restore lifecycle state and history
         lifecycle_data = data.get("lifecycle", {})
         current_state_str = lifecycle_data.get("current_state")
         if current_state_str:
             session._lifecycle._current_state = SessionState(current_state_str)
+        
+        # Restore state history
+        state_history = lifecycle_data.get("state_history", [])
+        if state_history:
+            session._lifecycle._state_history = [
+                (SessionState(entry["state"]), datetime.fromisoformat(entry["timestamp"]))
+                for entry in state_history
+            ]
 
         return session
 
@@ -206,8 +224,8 @@ class AgentSession:
             path: File path for session storage
         """
         path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "w") as f:
-            json.dump(self.to_dict(), f, indent=2)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(self.to_dict(), f, indent=2, sort_keys=True, ensure_ascii=False)
 
     @classmethod
     def load(cls, path: Path) -> "AgentSession":
@@ -220,6 +238,6 @@ class AgentSession:
         Returns:
             Loaded AgentSession instance
         """
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
         return cls.from_dict(data)

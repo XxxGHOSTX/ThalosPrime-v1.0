@@ -4,7 +4,6 @@ Integration Tests for Session Management
 Tests full session lifecycle with persistence.
 """
 
-import pytest
 from pathlib import Path
 from thalos_prime.session import SessionManager, SessionState
 
