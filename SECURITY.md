@@ -17,11 +17,13 @@ The Thalos Prime team takes security bugs seriously. We appreciate your efforts 
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please report security vulnerabilities by emailing:
-- **Email**: [INSERT SECURITY EMAIL]
-- **Subject**: "Thalos Prime Security Vulnerability Report"
+Instead, please report security vulnerabilities using GitHub Security Advisories:
 
-You should receive a response within 48 hours. If for some reason you do not, please follow up via email to ensure we received your original message.
+1. Navigate to the **Security** tab of this repository
+2. Click **"Report a vulnerability"**
+3. Submit a new private security advisory with details
+
+You should receive a response within 48 hours. If for some reason you do not, please add a follow-up comment to the advisory to ensure we received your original message.
 
 ### What to Include
 

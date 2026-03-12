@@ -327,6 +327,6 @@ def test_persistence(tmp_path):
 
 ## See Also
 
-- [Architecture](architecture.md) - System design
-- [CLI Reference](cli.md) - Command-line interface
 - [API Reference](api.md) - Full API documentation
+- [DevOps Automation](automation.md) - Workflow automation
+- [Deployment Guide](deployment.md) - Production deployment

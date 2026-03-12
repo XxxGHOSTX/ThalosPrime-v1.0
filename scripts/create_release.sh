@@ -80,12 +80,37 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
     exit 1
 fi
 
-# Update version in pyproject.toml
+# Update version in pyproject.toml (portable across macOS and Linux)
 log_info "Updating version in pyproject.toml..."
-sed -i "s/^version = .*/version = \"$VERSION\"/" pyproject.toml
+python3 -c "
+import re
+import sys
+
+with open('pyproject.toml', 'r') as f:
+    content = f.read()
+
+content = re.sub(r'^version = .*', f'version = \"$VERSION\"', content, flags=re.MULTILINE)
+
+with open('pyproject.toml', 'w') as f:
+    f.write(content)
+"
+
+# Update version in __init__.py
+log_info "Updating version in __init__.py..."
+python3 -c "
+import re
+
+with open('src/thalos_prime/__init__.py', 'r') as f:
+    content = f.read()
+
+content = re.sub(r'^__version__ = .*', f'__version__ = \"$VERSION\"', content, flags=re.MULTILINE)
+
+with open('src/thalos_prime/__init__.py', 'w') as f:
+    f.write(content)
+"
 
 # Commit version update
-git add pyproject.toml
+git add pyproject.toml src/thalos_prime/__init__.py
 git commit -m "chore: bump version to $VERSION" || log_warn "No version changes to commit"
 
 # Run tests

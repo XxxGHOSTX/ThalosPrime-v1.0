@@ -35,7 +35,7 @@ print(f"State: {session.state}")
 # Start the session
 session.start()
 assert session.state == SessionState.RUNNING
-assert session.is_active() == True
+assert session.is_active == True
 
 # Pause the session
 session.pause()
@@ -48,7 +48,7 @@ assert session.state == SessionState.RUNNING
 # Terminate the session
 session.terminate()
 assert session.state == SessionState.TERMINATED
-assert session.is_terminated() == True
+assert session.is_terminated == True
 ```
 
 #### Subsystem State Management
@@ -89,13 +89,14 @@ session_dict = session.to_dict()
 
 # Serialize to JSON
 import json
-session_json = session.to_json()
+session_json = json.dumps(session_dict, sort_keys=True)
 
 # Create from dictionary
 restored_session = AgentSession.from_dict(session_dict)
 
-# Create from JSON
-restored_session = AgentSession.from_json(session_json)
+# Create from JSON string
+import json
+restored_session = AgentSession.from_dict(json.loads(session_json))
 ```
 
 ### SessionManager
@@ -128,8 +129,8 @@ session = manager.get_session(session_id)
 all_sessions = manager.list_sessions()
 
 # List sessions by state
-running_sessions = manager.list_sessions(state=SessionState.RUNNING)
-paused_sessions = manager.list_sessions(state=SessionState.PAUSED)
+running_sessions = manager.list_sessions(state_filter=SessionState.RUNNING)
+paused_sessions = manager.list_sessions(state_filter=SessionState.PAUSED)
 
 # Get statistics
 stats = manager.get_statistics()
@@ -145,7 +146,7 @@ print(f"Paused: {stats['paused']}")
 manager.save_session(session_id)
 
 # Load all sessions from disk
-manager.load_all_sessions()
+manager.load_all()
 
 # Delete a session (terminates if active)
 manager.delete_session(session_id)
@@ -160,7 +161,7 @@ from thalos_prime.session import SessionLifecycle, SessionState
 lifecycle = SessionLifecycle()
 
 # Check current state
-current_state = lifecycle.get_state()
+current_state = lifecycle.current_state
 
 # Transition to new state
 lifecycle.transition_to(SessionState.RUNNING)
@@ -169,9 +170,9 @@ lifecycle.transition_to(SessionState.RUNNING)
 can_pause = lifecycle.can_transition_to(SessionState.PAUSED)
 
 # Get state history
-history = lifecycle.get_history()
-for entry in history:
-    print(f"{entry['timestamp']}: {entry['from_state']} -> {entry['to_state']}")
+history = lifecycle.state_history
+for state, timestamp in history:
+    print(f"{timestamp.isoformat()}: {state.value}")
 ```
 
 ## CLI API
@@ -186,9 +187,6 @@ thalos session start --name "my-agent"
 
 # Start with configuration
 thalos session start --name "my-agent" --config '{"model": "gpt-4"}'
-
-# Start with JSON config file
-thalos session start --name "my-agent" --config-file config.json
 ```
 
 #### Pause Session

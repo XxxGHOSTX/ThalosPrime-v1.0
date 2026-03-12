@@ -166,10 +166,9 @@ mypy src/thalos_prime/
 ## 📖 Documentation
 
 - [Session Management](docs/session.md) - Agent session lifecycle
-- [Architecture](docs/architecture.md) - System design principles
-- [CLI Reference](docs/cli.md) - Command-line interface
-- [DevOps Automation](docs/automation.md) - Workflow automation
 - [API Reference](docs/api.md) - Python API documentation
+- [DevOps Automation](docs/automation.md) - Workflow automation
+- [Deployment Guide](docs/deployment.md) - Production deployment
 
 ## 🤝 Contributing
 

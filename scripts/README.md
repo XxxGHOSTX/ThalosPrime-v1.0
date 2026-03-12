@@ -19,7 +19,14 @@ Scaffolds a new Python module with standard structure.
 
 Usage:
 ```bash
-./scripts/scaffold_module.sh module_name
+./scripts/scaffold_module.sh <module-name> <module-type>
+```
+
+Module types: `subsystem`, `integration`, `utility`
+
+Example:
+```bash
+./scripts/scaffold_module.sh analytics subsystem
 ```
 
 Creates:

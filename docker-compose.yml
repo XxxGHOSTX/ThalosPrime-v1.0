@@ -48,8 +48,9 @@ services:
       retries: 3
       start_period: 10s
     
-    # Run interactive shell by default
-    command: /bin/bash
+    # Keep container running with tail (for development/debugging)
+    # For production, replace with your application entrypoint
+    command: tail -f /dev/null
     
     networks:
       - thalos-network
