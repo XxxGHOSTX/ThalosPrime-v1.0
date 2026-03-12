@@ -1,0 +1,29 @@
+{
+  "name": "thalos-prime-agent-session",
+  "version": "1.0.0",
+  "description": "Thalos Prime Agent Session Management Module",
+  "main": "src/nodejs/index.js",
+  "scripts": {
+    "start": "node src/nodejs/index.js",
+    "test": "jest",
+    "lint": "eslint src/nodejs/**/*.js"
+  },
+  "keywords": [
+    "thalos-prime",
+    "agent-session",
+    "deterministic",
+    "ai"
+  ],
+  "author": "Thalos Prime Team",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "winston": "^3.10.0",
+    "redis": "^4.6.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.6.0",
+    "eslint": "^8.46.0"
+  }
+}

@@ -35,6 +35,17 @@ venv.bak/
 .coverage
 htmlcov/
 .tox/
+venv/
+ENV/
+env/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.npm
 
 # IDE
 .vscode/
@@ -58,3 +69,14 @@ logs/
 tmp/
 temp/
 *.tmp
+logs/
+*.log
+session_data/
+.thalos_cache/
+tmp/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
