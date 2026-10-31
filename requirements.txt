@@ -9,7 +9,7 @@ psutil>=5.9.0
 # Testing
 pytest>=7.4.0
 pytest-asyncio>=0.21.0
-pytest-cov>=4.1.0
+pytest-cov>=7.1.0
 
 # Development
 black>=23.0.0
