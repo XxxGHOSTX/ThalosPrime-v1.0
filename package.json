@@ -17,7 +17,7 @@
   "author": "Thalos Prime Team",
   "license": "MIT",
   "dependencies": {
-    "commander": "^11.0.0",
+    "commander": "^15.0.0",
     "winston": "^3.10.0",
     "redis": "^4.6.0",
     "uuid": "^9.0.0"
